@@ -57,6 +57,7 @@ for each_image in images_on_vm:
 
 	# the img exists, notify other processes and break. print out where it was found and where the other processes stopped at
 	if vm_img_hash == target_img_hash:
+		print('%s looks like %s' % (vm_img_hash, target_img_hash))
 		found_image = each_image
 		break
 
