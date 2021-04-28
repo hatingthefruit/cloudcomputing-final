@@ -6,6 +6,12 @@ import sys
 import hashlib
 from os import listdir
 
+#Helper function to split the array of filenames up in order to scatter them
+def split(a, n):
+    k, m = divmod(len(a), n)
+    return list(a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+
+
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
@@ -57,11 +63,11 @@ if host_rank == 0:
 
 	# Prepend the dir path to each image filename
 	root_images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
+	root_images_on_vm = split(root_images_on_vm, host_comm.Get_size())
 
 images_on_vm = []
 
-print(images_on_vm)
-host_comm.Scatter(root_images_on_vm, images_on_vm, root=0)
+images_on_vm = host_comm.scatter(root_images_on_vm, root=0)
 
 found_image = ''
 
