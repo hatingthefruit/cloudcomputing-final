@@ -4,10 +4,11 @@ import sys
 import hashlib
 from os import listdir
 
-#Helper function to split an array up into size number of subarrays. This allows us to divide the files on a host between different processes on that same host
-def split(list, size):
-    k, m = divmod(len(list), size)
-    return list(list[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(size))
+#Helper function to split an array up into size number of subarrays. This allows us to divide the files on a host between different processes on 
+def split(list_to_split, size):
+    k, m = divmod(len(list_to_split), size)
+    return list(list_to_split[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(size))
+
 
 
 comm = MPI.COMM_WORLD
@@ -39,13 +40,13 @@ else:
 
 # Everybody blocks & gets the img hash to search for.
 target_img_hash = comm.bcast(target_img_hash, root=0)
-# The host process gathers a list of all hostnames that have processes being run on them
+# The host process gathers a list_to_split of all hostnames that have processes being run on them
 host_list = comm.gather(MPI.Get_processor_name(), root=0)
 
-# Remove duplicates in the list of hostnames, then send it to all processes
+# Remove duplicates in the list_to_split of hostnames, then send it to all processes
 if rank == 0:
 	host_set = set(host_list)
-	host_list = list(host_set)
+	host_list = list_to_split(host_set)
 host_list = comm.bcast(host_list, root=0)
 
 # Add a separate communicator for processes on a single host
@@ -53,7 +54,7 @@ host_color = host_list.index(MPI.Get_processor_name())
 host_comm = comm.Split(color=host_color)
 host_rank = host_comm.Get_rank()
 
-# Get a list of files in some_images dir
+# Get a list_to_split of files in some_images dir
 root_images_on_vm = []
 if host_rank == 0:
 	images_on_vm = listdir('./some_images')
