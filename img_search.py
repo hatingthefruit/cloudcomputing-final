@@ -39,9 +39,12 @@ host_list = comm.gather(MPI.Get_processor_name(), root=0)
 if rank == 0:
 	host_set = set(host_list)
 	host_list = list(host_set)
+	print(host_list)
 
 host_list = comm.bcast(host_list, root=0)
+print(host_list)
 host_color = host_list.index(MPI.Get_processor_name())
+print(host_color)
 host_comm = comm.Split(color=host_color)
 
 host_rank = host_comm.Get_rank()
@@ -56,6 +59,7 @@ if host_rank == 0:
 else:
 	images_on_vm = []
 
+print(images_on_vm)
 images_on_vm = host_comm.scatter(images_on_vm, root=0)
 
 found_image = ''
