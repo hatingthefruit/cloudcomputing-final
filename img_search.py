@@ -50,6 +50,7 @@ found_image = ''
 # for each image file in the dir on the respective worker VM, calc the hash of it and compare to target hash
 for each_image in images_on_vm:
 	with open (each_image, 'rb') as vm_img_file:
+		hasher = hashlib.md5()
 		buf = vm_img_file.read()
 		hasher.update(buf)
 
