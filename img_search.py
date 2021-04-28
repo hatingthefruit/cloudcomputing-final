@@ -60,7 +60,7 @@ else:
 	images_on_vm = []
 
 print(images_on_vm)
-images_on_vm = host_comm.Scatter(images_on_vm, root=0)
+host_comm.Scatter(images_on_vm, images_on_vm, root=0)
 
 found_image = ''
 
