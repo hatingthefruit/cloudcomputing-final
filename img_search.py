@@ -91,6 +91,6 @@ if rank == 0:
 	for i in range(len(found_ranks)):
 		if found_ranks[i][0] != '':
 			isFound = True
-			print('Image called %s found on host %s with process rank %d' % (found_ranks[i][0], found_ranks[1], i))
+			print('Image called %s found on host %s with process rank %d' % (found_ranks[i][0], found_ranks[i][1], i))
 	if not isFound:
 		print('Image was not found on any host')
