@@ -35,20 +35,29 @@ else:
 
 # Everybody blocks & gets the img hash to search for. Then parallel lookup happens after
 target_img_hash = comm.bcast(target_img_hash, root=0)
+host_list = comm.gather(MPI.Get_processor_name(), root=0)
+if rank == 0:
+	host_set = set(host_list)
+	host_list = list(host_set)
 
+host_list = comm.bcast(host_list, root=0)
+host_color = host_list.index(MPI.Get_processor_name())
+host_comm = comm.Split(color=host_color)
+
+host_rank = host_comm.Get_rank()
 # Begin lookup for on every process including root
 	
 # Get a list of files in some_images dir
-images_on_vm = listdir('./some_images')
+if host_rank == 0:
+	images_on_vm = listdir('./some_images')
 
-# Prepend the dir path to each image filename
-images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
+	# Prepend the dir path to each image filename
+	images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
+
+images_on_vm = host_comm.scatter(images_on_vm, root=0)
 
 found_image = ''
 
-print(MPI.Get_processor_name())
-#comm.Barrier()
-# for each image file in the dir on the respective worker VM, calc the hash of it and compare to target hash
 for each_image in images_on_vm:
 	with open (each_image, 'rb') as vm_img_file:
 		hasher = hashlib.md5()
@@ -56,16 +65,13 @@ for each_image in images_on_vm:
 		hasher.update(buf)
 
 		vm_img_hash = hasher.hexdigest()
-		print('%s image hash %s looks like %s' % (each_image, vm_img_hash, target_img_hash))
 
 	# the img exists, notify other processes and break. print out where it was found and where the other processes stopped at
 	if vm_img_hash == target_img_hash:
-		print('%s looks like %s' % (vm_img_hash, target_img_hash))
 		found_image = each_image
 		break
 
 found_ranks = comm.gather(found_image, root=0)
-print(found_ranks)
 
 if rank == 0:
 	for i in range(len(found_ranks)):
