@@ -49,8 +49,6 @@ found_image = ''
 #comm.Barrier()
 # for each image file in the dir on the respective worker VM, calc the hash of it and compare to target hash
 for each_image in images_on_vm:
-	print('Process %d opening file %s' % (rank, each_image))
-	
 	with open (each_image, 'rb') as vm_img_file:
 		buf = vm_img_file.read()
 		hasher.update(buf)
@@ -59,17 +57,12 @@ for each_image in images_on_vm:
 
 	# the img exists, notify other processes and break. print out where it was found and where the other processes stopped at
 	if vm_img_hash == target_img_hash:
-		
-		isFound = True
 		found_image = each_image
-		print("Image called %s found in VM with process rank %d\n" % (each_image, rank))
 		break
 
-print('Gathering results in process %d' % (rank))
 found_ranks = comm.gather(each_image, root=0)
-print(found_ranks)
 
 if rank == 0:
 	for i in range(len(found_ranks)):
 		if found_ranks[i] != '':
-			print('Image called %s found in VM with process rank %d\n' % (found_ranks[i], i))
+			print('Image called %s found in VM with process rank %d' % (found_ranks[i], i))
