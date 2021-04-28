@@ -53,6 +53,8 @@ if host_rank == 0:
 
 	# Prepend the dir path to each image filename
 	images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
+else:
+	images_on_vm = []
 
 images_on_vm = host_comm.scatter(images_on_vm, root=0)
 
