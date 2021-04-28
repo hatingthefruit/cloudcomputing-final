@@ -55,12 +55,12 @@ if host_rank == 0:
 	images_on_vm = listdir('./some_images')
 
 	# Prepend the dir path to each image filename
-	images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
-else:
+	root_images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
+
 	images_on_vm = []
 
 print(images_on_vm)
-host_comm.Scatter(images_on_vm, images_on_vm, root=0)
+host_comm.Scatter(root_images_on_vm, images_on_vm, root=0)
 
 found_image = ''
 
