@@ -67,7 +67,7 @@ images_on_vm = []
 images_on_vm = host_comm.scatter(root_images_on_vm, root=0)
 
 # Default value that indicates a process did not find a file
-found_image = ''
+found_image = ['', MPI.Get_processor_name()]
 
 # Loop through all images in the array and try to match the hash with the input file
 for each_image in images_on_vm:
@@ -80,7 +80,7 @@ for each_image in images_on_vm:
 
 	# the img exists, set the value for found_image to the name of that file and stop searching
 	if vm_img_hash == target_img_hash:
-		found_image = each_image
+		found_image[0] = each_image
 		break
 
 # Get the names of images from all the processes
@@ -89,8 +89,8 @@ found_ranks = comm.gather(found_image, root=0)
 if rank == 0:
 	# Print out all the results of the lookup
 	for i in range(len(found_ranks)):
-		if found_ranks[i] != '':
+		if found_ranks[i][0] != '':
 			isFound = True
-			print('Image called %s found in VM with process rank %d' % (found_ranks[i], i))
+			print('Image called %s found on host %s with process rank %d' % (found_ranks[i][0], found_ranks[1], i))
 	if not isFound:
 		print('Image was not found on any host')
