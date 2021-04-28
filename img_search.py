@@ -46,6 +46,7 @@ images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
 
 found_image = ''
 
+print(MPI.Get_processor_name())
 #comm.Barrier()
 # for each image file in the dir on the respective worker VM, calc the hash of it and compare to target hash
 for each_image in images_on_vm:
