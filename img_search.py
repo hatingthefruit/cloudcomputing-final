@@ -49,7 +49,8 @@ host_comm = comm.Split(color=host_color)
 
 host_rank = host_comm.Get_rank()
 # Begin lookup for on every process including root
-	
+
+root_images_on_vm = []
 # Get a list of files in some_images dir
 if host_rank == 0:
 	images_on_vm = listdir('./some_images')
