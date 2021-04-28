@@ -54,6 +54,7 @@ for each_image in images_on_vm:
 		hasher.update(buf)
 
 		vm_img_hash = hasher.hexdigest()
+		print('%s looks like %s' % (vm_img_hash, target_img_hash))
 
 	# the img exists, notify other processes and break. print out where it was found and where the other processes stopped at
 	if vm_img_hash == target_img_hash:
