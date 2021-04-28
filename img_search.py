@@ -61,7 +61,7 @@ for each_image in images_on_vm:
 		found_image = each_image
 		break
 
-found_ranks = comm.gather(each_image, root=0)
+found_ranks = comm.gather(found_image, root=0)
 
 if rank == 0:
 	for i in range(len(found_ranks)):
