@@ -70,7 +70,6 @@ for each_image in images_on_vm:
 		print("Image called %s found in VM with process rank %d\n" % (each_image, rank))
 		break
 
-comm.Barrier()
 found_ranks = comm.gather(each_image, root=0)
 
 if rank == 0:
