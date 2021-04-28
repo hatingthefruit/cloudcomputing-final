@@ -49,12 +49,6 @@ found_image = ''
 #comm.Barrier()
 # for each image file in the dir on the respective worker VM, calc the hash of it and compare to target hash
 for each_image in images_on_vm:
-
-	req = comm.irecv(source=MPI.ANY_SOURCE, tag=1)
-	if req.Test() == True:
-		print("Process of rank %d stopped searching at file %s\n" % (rank, each_image))
-		isFound = True
-		break
 	
 	with open (each_image, 'rb') as vm_img_file:
 		buf = vm_img_file.read()
@@ -69,8 +63,9 @@ for each_image in images_on_vm:
 		found_image = each_image
 		print("Image called %s found in VM with process rank %d\n" % (each_image, rank))
 		break
-
+print('Gathering results')
 found_ranks = comm.gather(each_image, root=0)
+print(found_ranks)
 
 if rank == 0:
 	for i in range(len(found_ranks)):
