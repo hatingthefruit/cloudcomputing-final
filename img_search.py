@@ -49,8 +49,8 @@ host_rank = host_comm.Get_rank()
 
 #Helper function to split an array up into size number of subarrays. This allows us to divide the files on a host between different 
 def split(list_to_split, size):
-    size, remainder = divmod(len(list_to_split), size)
-    return list(list_to_split[i * size + min(i, remainder):(i + 1) * size + min(i + 1, remainder)] for i in range(size))
+    m, d = divmod(len(list_to_split), size)
+    return list(list_to_split[i * d + min(i, d):(i + 1) * d + min(i + 1, d)] for i in range(size))
 
 # Get a list of files in some_images dir
 root_images_on_vm = []
