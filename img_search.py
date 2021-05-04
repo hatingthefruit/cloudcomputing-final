@@ -1,13 +1,7 @@
-
 from mpi4py import MPI
 import sys
 import hashlib
 from os import listdir
-
-#Helper function to split an array up into size number of subarrays. This allows us to divide the files on a host between different 
-def split(list_to_split, size):
-    k, m = divmod(len(list_to_split), size)
-    return list(list_to_split[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(size))
 
 
 comm = MPI.COMM_WORLD
@@ -16,6 +10,7 @@ rank = comm.Get_rank()
 
 # Get file from last cmd line argument
 img_filepath = sys.argv[-1]
+search_dir = './some_images'
 
 #Define a hasher object
 hasher = hashlib.md5()
@@ -24,7 +19,6 @@ isFound = False
 
 # Root process will hash the user image
 if rank == 0:
-	
 	with open (str(img_filepath), 'rb') as img_file:
 		buf = img_file.read()
 		hasher.update(buf)
@@ -53,13 +47,18 @@ host_color = host_list.index(MPI.Get_processor_name())
 host_comm = comm.Split(color=host_color)
 host_rank = host_comm.Get_rank()
 
+#Helper function to split an array up into size number of subarrays. This allows us to divide the files on a host between different 
+def split(list_to_split, size):
+    size, remainder = divmod(len(list_to_split), size)
+    return list(list_to_split[i * size + min(i, remainder):(i + 1) * size + min(i + 1, remainder)] for i in range(size))
+
 # Get a list of files in some_images dir
 root_images_on_vm = []
 if host_rank == 0:
-	images_on_vm = listdir('./some_images')
+	images_on_vm = listdir(search_dir)
 
 	# Prepend the dir path to each image filename
-	root_images_on_vm = [f'./some_images/{i}' for i in images_on_vm]
+	root_images_on_vm = ['%s/%s' % (search_dir, i) for i in images_on_vm]
 	root_images_on_vm = split(root_images_on_vm, host_comm.Get_size())
 
 # Split up the image files between processes on a single host, to avoid redoing work
