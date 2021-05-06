@@ -43,7 +43,7 @@ if __name__ == "__main__":
         print("mpi4py module does not appear to be installed. Please check setup.")
         exit(1)
 
-    command = " ".join([mpiargs, hostpath, OTHER_OPTIONS, thread_arg, PYTHON_NAME, MODULES, SEARCH_SCRIPT, sys.argv[1]])
+    command = " ".join([mpiargs, MCA_ARG, hostpath, OTHER_OPTIONS, thread_arg, PYTHON_NAME, MODULES, SEARCH_SCRIPT, sys.argv[1]])
     print("Running command:")
     print(command)
     os.system(command)
