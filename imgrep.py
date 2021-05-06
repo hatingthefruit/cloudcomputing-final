@@ -44,6 +44,8 @@ if __name__ == "__main__":
         exit(1)
 
     command = " ".join([mpiargs, hostpath, OTHER_OPTIONS, thread_arg, PYTHON_NAME, MODULES, SEARCH_SCRIPT, sys.argv[1]])
+    print("Running command:")
+    print(command)
     os.system(command)
     
     
