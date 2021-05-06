@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 #mpiexec -mca btl ^openib --hostfile ../mpihosts -display-map -n 4 python -m mpi4py img_search.py ./all_images/google.png
 
